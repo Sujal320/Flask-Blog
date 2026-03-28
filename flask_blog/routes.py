@@ -1,7 +1,7 @@
-from flask import render_template, url_for, flash, redirect
+from flask import render_template, url_for, flash, redirect, request
 from flask_blog import app, db, bcrypt
 from flask_blog.forms import RegistrationForm, LoginForm
-from flask_login import login_user, current_user, logout_user
+from flask_login import login_user, current_user, logout_user, login_required
 
 from flask_blog.models import User, Post
 
@@ -68,7 +68,9 @@ def login():
         # verifying the ceredentials and user flask_login extension to handle login
         if user and bcrypt.check_password_hash(user.password, form.password.data):
             login_user(user, remember=form.remember.data)
-            return redirect(url_for('home'))
+            # this next_page is like holding till you login and then only let you immediately access
+            next_page = request.args.get('next')
+            return redirect(next_page) if next_page else redirect(url_for('home'))
         else:
             flash('Login Unsuccessful. Please check email and password', 'danger')
     return render_template('login.html', title='Login', form=form)
@@ -77,3 +79,9 @@ def login():
 def logout():
     logout_user()
     return redirect(url_for('home'))
+
+
+@app.route("/account")
+@login_required # this will make sure to access the account page you need to login first
+def account():
+    return render_template('account.html', title='Account')
