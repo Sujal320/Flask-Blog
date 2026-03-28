@@ -5,7 +5,10 @@ from flask import Flask
 #  url_for which helps generate URLs for routes
 from flask_bcrypt import Bcrypt
 # using bcrypt (a python library) to hash our passwords in our database
-
+from flask_login import LoginManager
+# Flask-Login that manages user session handling, 
+# such as logging users in, remembering them, and 
+# loading user data from the database
 from flask_sqlalchemy import SQLAlchemy
 # integrated a database into my Flask application using SQLAlchemy ORM,
 # which allows me to define database tables as Python classes and 
@@ -25,5 +28,6 @@ app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///site.db'
 
 db = SQLAlchemy(app)
 bcrypt = Bcrypt(app)
+login_manager = LoginManager(app)
 
 from flask_blog import routes

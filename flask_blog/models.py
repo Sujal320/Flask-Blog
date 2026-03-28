@@ -1,8 +1,16 @@
 from datetime import datetime, timezone
-from flask_blog import db
+from flask_blog import db, login_manager
+from flask_login import UserMixin
+# UserMixin provides default implementations of methods required by Flask-Login
+# Without UserMixin, your User class must define: is_authenticated, is_active, get_id()...
+
+# This function tells Flask-Login how to reload a user from the session
+@login_manager.user_loader
+def load_user(user_id):
+    return User.query.get(int(user_id))
 
 # The User model represents a table in the database. Each instance of the class corresponds to a row in the table
-class User(db.Model):
+class User(db.Model, UserMixin):
     # Each column defines constraints such as uniqueness and nullability, ensuring data integrity
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(20), unique=True, nullable=False)
