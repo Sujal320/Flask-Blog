@@ -6,7 +6,7 @@ __pycache__/
 
 # Virtual environment
 .venv/
-venv/
+*/.venv/
 
 # VSCode
 .vscode/
@@ -18,3 +18,4 @@ venv/
 .DS_Store
 
 instance/
+*/instance/
