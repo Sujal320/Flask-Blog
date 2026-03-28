@@ -3,6 +3,8 @@ from flask import Flask
 # First I import Flask which is the core framework used to create the web server.
 #  I also import render_template which allows me to dynamically render HTML templates, and 
 #  url_for which helps generate URLs for routes
+from flask_bcrypt import Bcrypt
+# using bcrypt (a python library) to hash our passwords in our database
 
 from flask_sqlalchemy import SQLAlchemy
 # integrated a database into my Flask application using SQLAlchemy ORM,
@@ -22,5 +24,6 @@ app.config['SECRET_KEY'] = 'c3136bac1cbbf1f5b906d44fd17c6c84'
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///site.db'
 
 db = SQLAlchemy(app)
+bcrypt = Bcrypt(app)
 
 from flask_blog import routes
