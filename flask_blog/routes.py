@@ -1,6 +1,7 @@
 from flask import render_template, url_for, flash, redirect
-from flask_blog import app
+from flask_blog import app, db, bcrypt
 from flask_blog.forms import RegistrationForm, LoginForm
+
 
 from flask_blog.models import User, Post
 
@@ -37,14 +38,21 @@ def about():
 @app.route("/register", methods=['GET', 'POST'])
 def register():
     form = RegistrationForm()
+    # The validate_on_submit() method checks two things: 
+    # first, whether the request method is POST
+    # second, whether all the form validators pass successfully
     if form.validate_on_submit():
-        # The validate_on_submit() method checks two things: 
-        # first, whether the request method is POST
-        # second, whether all the form validators pass successfully
-        flash(f'Account created for {form.username.data}!', 'success')
+        # if the form is validated before we make instance of the user in our database we hash the user's password
+        hashed_pw = bcrypt.generate_password_hash(form.password.data).decode('utf-8')
+        # creating the user instance in user database
+        user = User(username=form.username.data, email=form.email.data, password=hashed_pw)
+        # adding user to database and commiting
+        db.session.add(user)
+        db.session.commit()
+        flash('Your account has been created! You are now able to log in', 'success')
         # Flash messages are used to send temporary feedback to the user after an action occurs
-        return redirect(url_for('home'))
-        # After successful form submission, the user is redirected to the home page using redirect and url_for
+        return redirect(url_for('login'))
+        # After successful form submission, the user is redirected to the login page using redirect and url_for
     return render_template('register.html', title='Register', form=form)
 
 @app.route("/login", methods=['GET', 'POST'])
