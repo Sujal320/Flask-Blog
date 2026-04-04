@@ -51,4 +51,7 @@ def create_app(config_class=Config):
     from flask_blog.main.routes import main
     app.register_blueprint(main)
 
+    from flask_blog.errors.handlers import errors
+    app.register_blueprint(errors)
+
     return app
