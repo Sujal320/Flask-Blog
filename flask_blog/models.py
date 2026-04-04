@@ -1,6 +1,7 @@
 from datetime import datetime, timezone
 from itsdangerous import URLSafeTimedSerializer as Serializer
-from flask_blog import db, login_manager, app
+from flask import current_app
+from flask_blog import db, login_manager
 from flask_login import UserMixin
 # UserMixin provides default implementations of methods required by Flask-Login
 # Without UserMixin, your User class must define: is_authenticated, is_active, get_id()...
@@ -23,12 +24,12 @@ class User(db.Model, UserMixin):
     # This is implemented using SQLAlchemy’s relationship function.
 
     def get_reset_token(self, expires_sec=1800):
-        s = Serializer(app.config['SECRET_KEY'], expires_sec)
+        s = Serializer(current_app.config['SECRET_KEY'], expires_sec)
         return s.dumps({'user_id': self.id})
     
     @staticmethod
     def verify_reset_token(token):
-        s = Serializer(app.config['SECRET_KEY'])
+        s = Serializer(current_app.config['SECRET_KEY'])
         try:
             user_id = s.loads(token)['user_id']
         except:
